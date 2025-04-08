@@ -76,10 +76,13 @@ class Text8Dataset(Dataset):
         # Extract subset
         if split == 'train':
             rawdata = rawdata[:90000000]
+            # rawdata = rawdata[:90000] # for test-run
         elif split == 'valid':
             rawdata = rawdata[90000000:95000000]
+            # rawdata = rawdata[90000:95000]
         elif split == 'test':
             rawdata = rawdata[95000000:]
+            # rawdata = rawdata[95000:100000]
 
         # Encode characters
         data = torch.tensor([self.vocab.stoi[s] for s in rawdata])
