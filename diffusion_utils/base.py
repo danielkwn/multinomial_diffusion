@@ -1,6 +1,7 @@
 import os
 import pickle
 import torch
+import sys
 from prettytable import PrettyTable
 
 
@@ -131,28 +132,33 @@ class BaseExperiment(object):
 
     def run(self, epochs):
 
-        for epoch in range(self.current_epoch, epochs):
+        try:
+            for epoch in range(self.current_epoch, epochs):
 
-            # Train
-            train_dict = self.train_fn(epoch)
-            self.log_train_metrics(train_dict)
+                # Train
+                train_dict = self.train_fn(epoch)
+                self.log_train_metrics(train_dict)
 
-            # Eval
-            if (epoch+1) % self.eval_every == 0:
-                eval_dict = self.eval_fn(epoch)
-                self.log_eval_metrics(eval_dict)
-                self.eval_epochs.append(epoch)
-            else:
-                eval_dict = None
+                # Eval
+                if (epoch+1) % self.eval_every == 0:
+                    eval_dict = self.eval_fn(epoch)
+                    self.log_eval_metrics(eval_dict)
+                    self.eval_epochs.append(epoch)
+                else:
+                    eval_dict = None
 
-            # Log
-            self.save_metrics()
-            self.log_fn(epoch, train_dict, eval_dict)
+                # Log
+                self.save_metrics()
+                self.log_fn(epoch, train_dict, eval_dict)
 
-            # Checkpoint
-            self.current_epoch += 1
-            if (epoch+1) % self.check_every == 0:
-                self.checkpoint_save()
+                # Checkpoint
+                self.current_epoch += 1
+                if (epoch+1) % self.check_every == 0:
+                    self.checkpoint_save()
+
+        except KeyboardInterrupt:
+            self.checkpoint_save()
+            sys.exit(0)
 
 
 class DataParallelDistribution(torch.nn.DataParallel):
