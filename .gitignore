@@ -6,4 +6,5 @@ dist
 text8
 .vscode
 *.ttf
+*.yaml
 .DS_Store
